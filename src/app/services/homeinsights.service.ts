@@ -176,6 +176,30 @@ export class HomeinsightsService {
         kos: [],
         price: 235000,
         visited: false
+      },
+      { 
+        id: uuidv4(),
+        title: 'C/ Floreal',
+        agency: 'Roig Pañella / Maricel',
+        url: 'https://www.idealista.com/inmueble/106530481/',
+        urlImages: [
+          'https://img4.idealista.com/blur/WEB_DETAIL-XL-L/0/id.pro.es.image.master/75/a4/c5/1285663990.jpg',
+          'https://img4.idealista.com/blur/WEB_DETAIL-XL-L/0/id.pro.es.image.master/f8/4c/97/1310179582.jpg',
+          'https://img4.idealista.com/blur/WEB_DETAIL-XL-L/0/id.pro.es.image.master/84/13/61/1285664074.jpg',
+          'https://img4.idealista.com/blur/WEB_DETAIL-XL-L/0/id.pro.es.image.master/c7/6c/12/1285663907.jpg',
+          'https://img4.idealista.com/blur/WEB_DETAIL-XL-L/0/id.pro.es.image.master/02/b0/df/1285664079.jpg',
+          'https://img4.idealista.com/blur/WEB_DETAIL-XL-L/0/id.pro.es.image.master/b8/19/c4/1285664096.jpg',
+          'https://img4.idealista.com/blur/WEB_DETAIL-XL-L/0/id.pro.es.image.master/11/50/45/1285664100.jpg',
+          'https://img4.idealista.com/blur/WEB_DETAIL-XL-L/0/id.pro.es.image.master/6a/79/f4/1285664102.jpg'
+        ],
+        locationInfo: {
+          location: 'Sitges',
+          address: 'C/ Floreal'
+        },
+        oks: [],
+        kos: [],
+        price: 265000,
+        visited: false
       }
     ] as HomeInterface[];
   }
