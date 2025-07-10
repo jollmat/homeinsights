@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -15,6 +15,11 @@ import { HomeInterface } from './model/interfaces/home.interface';
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
+
+  readonly isMobile = signal(false);
+  readonly isTablet = signal(false);
+  readonly isDesktop = signal(false);
+  readonly userAgent = navigator.userAgent;
   
   allHomes: HomeInterface[] = [];
   homes: HomeInterface[] = [];
@@ -24,9 +29,9 @@ export class AppComponent implements OnInit {
   viewType: 'GRID' | 'LIST' = 'GRID';
 
   sortGridTypes = [
-    { id: 'price', name: 'Preu' },
-    { id: 'title', name: 'Títol' },
-    { id: 'visited', name: 'Visitat' },
+    { id: 'price', name: 'Preu', sortDir: 'ASC' },
+    { id: 'title', name: 'Títol', sortDir: 'ASC' },
+    { id: 'visited', name: 'Visitat', sortDir: 'DESC' },
     { id: 'oks', name: 'A favor', sortDir: 'DESC' },
     { id: 'kos', name: 'En contra', sortDir: 'DESC' },
     { id: 'score', name: 'Puntuació', sortDir: 'DESC' }
@@ -56,7 +61,21 @@ export class AppComponent implements OnInit {
     private readonly homeInsightsService: HomeinsightsService,
     private readonly offCanvasService: NgbOffcanvas,
     private fb: FormBuilder
-  ){}
+  ){
+    this.detectDevice();
+  }
+
+  private detectDevice(): void {
+    const width = window.innerWidth;
+
+    this.isMobile.set(width <= 768);
+    this.isTablet.set(width > 768 && width <= 1024);
+    this.isDesktop.set(width > 1024);
+
+    console.log('isMobile', this.isMobile());
+    console.log('isTablet', this.isTablet());
+    console.log('isDesktop', this.isDesktop());
+  }
 
   onSortByChange(ev: any) {
     this.sortBy(ev['id'], ev['sortDir'] || 'ASC');

@@ -1,31 +1,31 @@
-<div class="d-flex flex-column w-100 p-2">
-    <div class="btn-group" role="group" aria-label="Basic example">
-        <button type="button" class="btn btn-primary" [ngClass]="{'active': viewType==='GRID'}" (click)="viewType='GRID'">Graella</button>
-        <button type="button" class="btn btn-primary" [ngClass]="{'active': viewType==='LIST'}" (click)="viewType='LIST'">Llistat</button>
+<ng-container *ngIf="!isMobile()">
+    <div class="d-flex flex-column w-100 p-2">
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <button type="button" class="btn btn-primary" [ngClass]="{'active': viewType==='GRID'}" (click)="viewType='GRID'">Graella</button>
+            <button type="button" class="btn btn-primary" [ngClass]="{'active': viewType==='LIST'}" (click)="viewType='LIST'">Llistat</button>
+        </div>
+        <div [ngSwitch]="viewType">
+            <ng-container *ngSwitchCase="'GRID'" [ngTemplateOutlet]="gridTemplate"></ng-container>
+            <ng-container *ngSwitchCase="'LIST'" [ngTemplateOutlet]="listTemplate"></ng-container>
+        </div>
     </div>
-    <div [ngSwitch]="viewType">
-        <ng-container *ngSwitchCase="'GRID'" [ngTemplateOutlet]="gridTemplate"></ng-container>
-        <ng-container *ngSwitchCase="'LIST'" [ngTemplateOutlet]="listTemplate"></ng-container>
+</ng-container>
+
+<ng-container *ngIf="isMobile()">
+    <div class="d-flex flex-column w-100">
+        <div class="d-flex align-items-center w-100 fs-3 title-block p-3">
+            <i class="fas fa-home me-2"></i><span>HomeInsights</span>
+        </div>
+        <div class="w-100 px-3">
+            <ng-container [ngTemplateOutlet]="gridTemplate"></ng-container>
+        </div>
     </div>
-</div>
+</ng-container>
 
 <ng-template #gridTemplate>
-    <div class="d-flex flex-column w-100">
+    <div class="d-flex flex-column w-100 pb-4">
         <ng-container [ngTemplateOutlet]="totalsHeaderTemplate"></ng-container>
-        <div class="w-100 d-flex justify-content-end">
-            <ng-select
-                class="w-50"
-                [items]="sortGridTypes"
-                bindLabel="name"
-                bindValue="id"
-                [multiple]="false"
-                [clearable]="false"
-                [ngModel]="sortConfig.sortBy"
-                (change)="onSortByChange($event)"
-                placeholder="Ordenat per">
-            </ng-select>
-        </div>
-        <div class="d-flex flex-wrap home-grid w-100 mt-3">
+        <div class="d-flex flex-wrap home-grid w-100 mt-3" [ngClass]="{'justify-content-center': isMobile()}">
             <ng-container *ngFor="let home of homes">
                 <div class="card">
                     <img (click)="openHomeDetail(homeDetailPopupTemplate, home)" [src]="(home.urlImages && home.urlImages.length>0)?home.urlImages[0]:noImageUrl" class="card-img-top cursor-pointer" alt="{{home.title}}">
@@ -116,7 +116,33 @@
 
 <!-- Totals header template -->
 <ng-template #totalsHeaderTemplate>
-    <div class="w-100 text-end p-2">{{homes.length}} finques/vivendes</div>
+    <div class="d-flex justify-content-between align-items-center w-100 pt-2 totals-header">
+        <div class="d-flex align-items-center w-50 text-start p-2">{{homes.length}} finques/vivendes</div>
+        <ng-select
+            *ngIf="viewType==='GRID'"
+            class="w-50"
+            [items]="sortGridTypes"
+            bindLabel="name"
+            bindValue="id"
+            [multiple]="false"
+            [clearable]="false"
+            [ngModel]="sortConfig.sortBy"
+            (change)="onSortByChange($event)"
+            placeholder="Ordenat per">
+             <!-- Custom Option Template -->
+            <ng-template ng-option-tmp let-item="item">
+                <div>
+                    <strong>{{ item.name }}</strong>
+                    <small class="text-muted ms-2">({{ item.sortDir }})</small>
+                </div>
+            </ng-template>
+
+            <!-- Custom Selected Item Template -->
+            <ng-template ng-label-tmp let-item="item">
+                <span>{{ item.name }} <small class="text-muted ms-2">({{ item.sortDir }})</small></span>
+            </ng-template>
+        </ng-select>
+    </div>
 </ng-template>
 
 <!-- Pros/contras template -->

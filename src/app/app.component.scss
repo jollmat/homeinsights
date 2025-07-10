@@ -1,3 +1,18 @@
+.title-block {
+    background-color: lavender;
+    position: sticky;
+    top: 0px;
+    z-index: 1;
+}
+
+.totals-header {
+    position: sticky;
+    top: 67px;
+    z-index: 1;
+    background-color: white;
+    border-bottom: 1px solid #ccc;
+}
+
 .modal-body {
     .image-container {
         height: calc(100vh - 485px);
