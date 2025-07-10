@@ -1,6 +1,8 @@
 import { HomeGenericInfoInterface } from "./home-generic-info.interface";
 import { HomeLocationInfoInterface } from "./home-location-info.interface";
 
+export type VisitStatus = 'pending' | 'visited' | 'discarted';
+
 export interface HomeInterface {
     id: string,
     title: string,
@@ -13,6 +15,6 @@ export interface HomeInterface {
     oks: string[],
     kos: string[],
     price: number,
-    visited?: boolean,
+    visitStatus: VisitStatus,
     score?: number
 }

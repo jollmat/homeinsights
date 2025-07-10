@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HomeInterface } from '../model/interfaces/home.interface';
+import { HomeInterface, VisitStatus } from '../model/interfaces/home.interface';
 import { Observable, of } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -23,7 +23,8 @@ export class HomeinsightsService {
       },
       oks: [],
       kos: [],
-      price: 0
+      price: 0,
+      visitStatus: 'pending'
     } as HomeInterface
   }
 
@@ -44,7 +45,8 @@ export class HomeinsightsService {
         },
         oks: [],
         kos: [],
-        price: 285000
+        price: 285000,
+        visitStatus: 'pending'
       },
       { 
         id: uuidv4(),
@@ -65,7 +67,7 @@ export class HomeinsightsService {
         oks: ['Dimensions menjador, cuina i habitacions'],
         kos: ['Instal.lació elèctrica', 'Acabats reforma', 'Qualitat sostre terrat'],
         price: 310000,
-        visited: true,
+        visitStatus: 'visited',
         score: 5
       },
       { 
@@ -94,7 +96,7 @@ export class HomeinsightsService {
           'Desaigüe pati'
         ],
         price: 295000,
-        visited: true,
+        visitStatus: 'visited',
         score: 9
       },
       { 
@@ -115,7 +117,8 @@ export class HomeinsightsService {
         },
         oks: [],
         kos: [],
-        price: 295000
+        price: 295000,
+        visitStatus: 'pending'
       },
       { 
         id: uuidv4(),
@@ -132,7 +135,8 @@ export class HomeinsightsService {
         },
         oks: [],
         kos: [],
-        price: 295000
+        price: 295000,
+        visitStatus: 'pending'
       },
       { 
         id: uuidv4(),
@@ -153,7 +157,8 @@ export class HomeinsightsService {
         },
         oks: [],
         kos: [],
-        price: 310000
+        price: 310000,
+        visitStatus: 'pending'
       },
       { 
         id: uuidv4(),
@@ -175,7 +180,7 @@ export class HomeinsightsService {
         oks: [],
         kos: [],
         price: 235000,
-        visited: false
+        visitStatus: 'discarted'
       },
       { 
         id: uuidv4(),
@@ -199,7 +204,7 @@ export class HomeinsightsService {
         oks: ['Orientació', 'Ubicació'],
         kos: ['Cuina diminuta'],
         price: 265000,
-        visited: true,
+        visitStatus: 'visited',
         score: 7
       }
     ] as HomeInterface[];

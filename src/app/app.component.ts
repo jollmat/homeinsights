@@ -31,7 +31,7 @@ export class AppComponent implements OnInit {
   sortGridTypes = [
     { id: 'price', name: 'Preu', sortDir: 'ASC' },
     { id: 'title', name: 'Títol', sortDir: 'ASC' },
-    { id: 'visited', name: 'Visitat', sortDir: 'DESC' },
+    { id: 'visitStatus', name: 'Estat visita', sortDir: 'DESC' },
     { id: 'oks', name: 'A favor', sortDir: 'DESC' },
     { id: 'kos', name: 'En contra', sortDir: 'DESC' },
     { id: 'score', name: 'Puntuació', sortDir: 'DESC' }
@@ -131,9 +131,9 @@ export class AppComponent implements OnInit {
           aVal = a.kos.length;
           bVal = b.kos.length;
           break;
-        case 'visited':
-          aVal = a.kos.length;
-          bVal = b.kos.length;
+        case 'visitStatus':
+          aVal = a.visitStatus;
+          bVal = b.visitStatus;
           break;
         case 'score':
           aVal = a.score || 0;
