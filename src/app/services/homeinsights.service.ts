@@ -239,6 +239,18 @@ export class HomeinsightsService {
     return hex.length === 1 ? '0' + hex : hex;
   }
 
+  static getRatingColor(rating: number): string {
+    // Asegura que el rating esté entre 0 y 10
+    const value = Math.max(0, Math.min(10, rating));
+  
+    // Interpolación lineal de color: rojo (255,0,0) → verde (0,255,0)
+    const red = Math.round(255 - (value * 25.5));
+    const green = Math.round(value * 25.5);
+  
+    // Devuelve en formato RGB (puedes cambiar a HEX si prefieres)
+    return `rgb(${red}, ${green}, 0)`;
+  }
+
   static newId(): string {
     return '';
   }

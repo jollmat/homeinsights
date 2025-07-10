@@ -219,7 +219,8 @@ export class AppComponent implements OnInit {
     if (val===undefined) {
       return 'transparent';
     } else {
-      return HomeinsightsService.getColorFromValue(val);
+      // return HomeinsightsService.getColorFromValue(val);
+      return HomeinsightsService.getRatingColor(val);
     }
   }
 

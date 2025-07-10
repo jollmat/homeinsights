@@ -52,7 +52,7 @@
                     <th class="cursor-pointer text-end" (click)="sortBy('oks')">A favor <ng-container *ngIf="isSortedBy('oks')" [ngTemplateOutlet]="sortIconsTemplate" [ngTemplateOutletContext]="{sortField:'oks'}"></ng-container></th>
                     <th class="cursor-pointer text-end" (click)="sortBy('kos')">En contra <ng-container  *ngIf="isSortedBy('kos')"[ngTemplateOutlet]="sortIconsTemplate" [ngTemplateOutletContext]="{sortField:'kos'}"></ng-container></th>
                     <th class="cursor-pointer text-center" (click)="sortBy('visited')">Visitat <ng-container  *ngIf="isSortedBy('visited')"[ngTemplateOutlet]="sortIconsTemplate" [ngTemplateOutletContext]="{sortField:'visited'}"></ng-container></th>
-                    <th class="cursor-pointer text-center" (click)="sortBy('score')">Puntuació <ng-container  *ngIf="isSortedBy('score')"[ngTemplateOutlet]="sortIconsTemplate" [ngTemplateOutletContext]="{sortField:'score'}"></ng-container></th>
+                    <th class="cursor-pointer text-end" (click)="sortBy('score')">Puntuació <ng-container  *ngIf="isSortedBy('score')"[ngTemplateOutlet]="sortIconsTemplate" [ngTemplateOutletContext]="{sortField:'score'}"></ng-container></th>
                     <th></th>
                 </tr>
             </thead>
