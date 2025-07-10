@@ -66,7 +66,7 @@ export class HomeinsightsService {
         kos: ['Instal.lació elèctrica', 'Acabats reforma', 'Qualitat sostre terrat'],
         price: 310000,
         visited: true,
-        score: 6
+        score: 5
       },
       { 
         id: uuidv4(),
@@ -196,10 +196,11 @@ export class HomeinsightsService {
           location: 'Sitges',
           address: 'C/ Floreal'
         },
-        oks: [],
-        kos: [],
+        oks: ['Orientació', 'Ubicació'],
+        kos: ['Cuina diminuta'],
         price: 265000,
-        visited: false
+        visited: true,
+        score: 7
       }
     ] as HomeInterface[];
   }
