@@ -72,6 +72,20 @@ span {
     }
 }
 
+.visited-flag {
+    background-color: gold;
+    color: #333;
+    position: absolute;
+    transform: rotate(335deg);
+    left: 0px;
+    top: 10px;
+    font-size: 13px;
+
+    &.mobile {
+        left: -8px;
+    }
+}
+
 ::ng-deep .custom-offcanvas-width {
     width: 500px !important; /* Set your desired width */
 }
