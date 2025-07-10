@@ -1,0 +1,5 @@
+// Build
+ng build --configuration production --base-href="./"
+
+// Deploy
+npx angular-cli-ghpages --dir=dist/browser
