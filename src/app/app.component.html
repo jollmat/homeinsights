@@ -95,7 +95,18 @@
 <!-- Grid card template -->
 <ng-template let-home="home" #gridCardTemplate>
     <div class="card">
-        <img (click)="openHomeDetail(homeDetailPopupTemplate, home)" [src]="(home.urlImages && home.urlImages.length>0)?home.urlImages[0]:noImageUrl" class="card-img-top cursor-pointer" alt="{{home.title}}">
+        <div class="image-container-slider d-flex w-100">
+            <ng-container *ngIf="home.urlImages && home.urlImages.length>0">
+                <ng-container *ngFor="let img of home.urlImages">
+                    <img (click)="openHomeDetail(homeDetailPopupTemplate, home)" [src]="img" class="card-img-top cursor-pointer" alt="{{home.title}}">
+                </ng-container>
+            </ng-container>
+            <ng-container *ngIf="!(home.urlImages && home.urlImages.length>0)">
+                <img (click)="openHomeDetail(homeDetailPopupTemplate, home)" [src]="noImageUrl" class="card-img-top cursor-pointer" alt="{{home.title}}">
+            </ng-container>
+        </div>
+        
+        <img  *ngIf="false" (click)="openHomeDetail(homeDetailPopupTemplate, home)" [src]="(home.urlImages && home.urlImages.length>0)?home.urlImages[0]:noImageUrl" class="card-img-top cursor-pointer" alt="{{home.title}}">
         
         <div *ngIf="home.visited" class="visited-flag text-center py-0 px-2" [ngClass]="{'mobile': isMobile()}"><i class="fas fa-check text-success me-2"></i>Visitat</div>
         
@@ -233,8 +244,9 @@
                 />
             </div>
 
+            <!-- Slider -->
             <ng-container *ngIf="currentHome?.urlImages">
-                <div class="w-100 d-flex flex-wrap image-container mt-3">
+                <div class="w-100 d-flex image-container-slider mt-3">
                     <ng-container *ngFor="let img of currentHome?.urlImages">
                         <img [src]="img">
                     </ng-container>

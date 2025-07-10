@@ -18,7 +18,14 @@
         height: calc(100vh - 485px);
         overflow: auto;
         gap: 6px;
-
+        img {
+            width: 100%;
+        }
+    }
+    .image-container-slider {
+        height: calc(100vh - 485px);
+        overflow: auto;
+        gap: 10px;
         img {
             width: 100%;
         }
@@ -60,6 +67,17 @@ td {
             height: 200px;
             object-fit: cover;
             border-radius: 5px;
+        }
+
+        .image-container-slider {
+            overflow: auto;
+            height: fit-content;
+            gap: 10px;
+            img {
+                height: 200px;
+                object-fit: cover;
+                border-radius: 5px;
+            }
         }
     }
 }
