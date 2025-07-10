@@ -71,10 +71,6 @@ export class AppComponent implements OnInit {
     this.isMobile.set(width <= 768);
     this.isTablet.set(width > 768 && width <= 1024);
     this.isDesktop.set(width > 1024);
-
-    console.log('isMobile', this.isMobile());
-    console.log('isTablet', this.isTablet());
-    console.log('isDesktop', this.isDesktop());
   }
 
   onSortByChange(ev: any) {
@@ -189,6 +185,9 @@ export class AppComponent implements OnInit {
     this.currentHome = home;
     this.createForm();
     this.offCanvasService.open(modal,{position: 'end', panelClass: 'custom-offcanvas-width'/*, backdrop: 'static'*/});
+    if (document.activeElement) {
+      setTimeout(() => (document.activeElement as HTMLElement).blur(), 10);
+    }
   }
 
   updateHomes(homes?: HomeInterface[]) {
