@@ -13,8 +13,9 @@
 
 <ng-container *ngIf="isMobile()">
     <div class="d-flex flex-column w-100">
-        <div class="d-flex align-items-center w-100 fs-3 title-block p-3">
-            <i class="fas fa-home me-2"></i><span>HomeInsights</span>
+        <div class="d-flex align-items-center justify-content-between 100 fs-3 title-block p-3">
+            <div><i class="fas fa-home me-2"></i><span>HomeInsights</span></div>
+            <button class="btn btn-sm btn-light" (click)="openNewHome(homeDetailPopupTemplate)">+ New</button>
         </div>
         <div class="w-100 px-3">
             <ng-container [ngTemplateOutlet]="gridTemplate"></ng-container>
@@ -231,12 +232,40 @@
 <ng-template #homeDetailPopupTemplate let-modal>
     <div class="modal-header">
         <div class="d-flex justify-content-between align-items-center w-100 p-3">
-            <span class="fs-3">Detall finca/vivenda</span>
+            <span class="fs-3" *ngIf="!isNewHome()">Detall finca/vivenda</span>
+            <span class="fs-3" *ngIf="isNewHome()">Nova finca/vivenda</span>
             <i class="fas fa-close cursor-pointer fs-3" (click)="closeContactDetail()"></i>
         </div>
     </div>
     <div class="modal-body p-3 pt-0">
-        <form [formGroup]="form">
+
+        <ng-container *ngIf="isNewHome()">
+            <div class="w-100 d-flex justify-content-start align-items-center mb-3">
+                <label>
+                    <input
+                      type="radio"
+                      name="newHomeFromElement"
+                      value="link"
+                      [(ngModel)]="newHomeFrom">
+                    Usant un link (Habitaclia)
+                  </label>
+                  
+                  <label class="ms-3">
+                    <input
+                      type="radio"
+                      name="newHomeFromElement"
+                      value="form"
+                      [(ngModel)]="newHomeFrom">
+                    Manualment
+                  </label>
+            </div>
+        </ng-container>
+
+        <div *ngIf="newHomeFrom==='link'" class="w-100 d-flex">
+            <app-home-url-scrapper (onAddHome)="doAddHome($event)" (onCheckingUrl)="setCheckingUrl($event)" class="w-100"></app-home-url-scrapper>
+        </div>
+
+        <form [formGroup]="form" [hidden]="newHomeFrom!=='form'">
 
             <div *ngFor="let field of formConfig" class="mt-2">
                 <label>{{ field.label }}</label>

@@ -2,15 +2,17 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { ToastrService } from 'ngx-toastr';
 import { RouterOutlet } from '@angular/router';
 import { NgbOffcanvas, NgbOffcanvasModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { HomeinsightsService } from './services/homeinsights.service';
 import { HomeInterface } from './model/interfaces/home.interface';
+import { HomeUrlScrapperComponent } from "./components/layouts/home-url-scrapper/home-url-scrapper.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, NgbTooltipModule, NgbOffcanvasModule, FormsModule, ReactiveFormsModule, NgSelectModule],
+  imports: [RouterOutlet, CommonModule, NgbTooltipModule, NgbOffcanvasModule, FormsModule, ReactiveFormsModule, NgSelectModule, HomeUrlScrapperComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -20,6 +22,9 @@ export class AppComponent implements OnInit {
   readonly isTablet = signal(false);
   readonly isDesktop = signal(false);
   readonly userAgent = navigator.userAgent;
+
+  readonly isNewHome = signal(false);
+  readonly isCheckingUrl = signal(false);
   
   allHomes: HomeInterface[] = [];
   homes: HomeInterface[] = [];
@@ -60,7 +65,8 @@ export class AppComponent implements OnInit {
   constructor(
     private readonly homeInsightsService: HomeinsightsService,
     private readonly offCanvasService: NgbOffcanvas,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toastrService: ToastrService
   ){
     this.detectDevice();
   }
@@ -175,6 +181,7 @@ export class AppComponent implements OnInit {
     }
   }
 
+  newHomeFrom = 'form';
   openNewHome(modal: unknown) {
     const newHome: HomeInterface = this.homeInsightsService.getNewHome();
     this.createForm();
@@ -182,6 +189,10 @@ export class AppComponent implements OnInit {
   }
 
   openHomeDetail(modal: unknown, home: HomeInterface) {
+    this.isNewHome.set(home.id.length===0);
+    this.newHomeFrom = this.isNewHome()? 'link':'form';
+    this.readonly = !this.isNewHome();
+
     this.currentHome = home;
     this.createForm();
     this.offCanvasService.open(modal,{position: 'end', panelClass: 'custom-offcanvas-width'/*, backdrop: 'static'*/});
@@ -210,6 +221,17 @@ export class AppComponent implements OnInit {
     }
   }
 
+  doAddHome(home: HomeInterface) {
+    let homesToSave: HomeInterface[] = [...this.allHomes];
+    if (homesToSave.some((_home) => _home.id===this.currentHome?.id)) {
+      homesToSave = this.allHomes.filter((_home) => _home.id!==this.currentHome?.id);
+    }
+    homesToSave.push(home);
+    this.updateHomes(homesToSave);
+    this.closeContactDetail();
+    this.toastrService.success('Nova finca/vivenda creada correctament!');
+  }
+
   closeContactDetail() {
     this.currentHome = undefined;
     this.offCanvasService.dismiss();
@@ -222,6 +244,10 @@ export class AppComponent implements OnInit {
       // return HomeinsightsService.getColorFromValue(val);
       return HomeinsightsService.getRatingColor(val);
     }
+  }
+
+  setCheckingUrl(isChecking: boolean) {
+    this.isCheckingUrl.set(isChecking);
   }
 
   ngOnInit(): void {

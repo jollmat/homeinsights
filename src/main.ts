@@ -5,6 +5,8 @@ import { AppComponent } from './app/app.component';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 
+import 'ngx-toastr/toastr'; 
+
 registerLocaleData(localeEs);
 
 bootstrapApplication(AppComponent, appConfig)

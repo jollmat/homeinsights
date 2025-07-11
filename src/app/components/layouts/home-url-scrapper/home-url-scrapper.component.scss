@@ -1,0 +1,24 @@
+.op-50 {
+    opacity: .5;
+}
+
+i {
+    &.flag {
+        position: absolute;
+        top: 30px;
+        font-size: 18px;
+        left: calc(100% - 115px);
+    }
+}
+
+input {
+    &.search-url {
+        padding-right: 35px;
+        width: calc(100%);
+    }
+}
+
+.home-detail {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
