@@ -262,7 +262,7 @@
         </ng-container>
 
         <div *ngIf="newHomeFrom==='link'" class="w-100 d-flex">
-            <app-home-url-scrapper (onAddHome)="doAddHome($event)" (onCheckingUrl)="setCheckingUrl($event)" class="w-100"></app-home-url-scrapper>
+            <app-home-url-scrapper [homes]="homes" (onAddHome)="doAddHome($event)" (onCheckingUrl)="setCheckingUrl($event)" class="w-100"></app-home-url-scrapper>
         </div>
 
         <form [formGroup]="form" [hidden]="newHomeFrom!=='form'">

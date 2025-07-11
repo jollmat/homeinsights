@@ -211,6 +211,7 @@ export class HomeinsightsService {
   }
 
   loadHomes(): Observable<HomeInterface[]> {
+    localStorage.removeItem(this.localStorageKey);
     const storedHomesStr = localStorage.getItem(this.localStorageKey);
     if (storedHomesStr!=null) {
       return of(JSON.parse(storedHomesStr) as HomeInterface[]);

@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { v4 as uuidv4 } from 'uuid';
 import { FormBuilder, FormGroup, FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ToastrService } from 'ngx-toastr';
@@ -223,9 +224,8 @@ export class AppComponent implements OnInit {
 
   doAddHome(home: HomeInterface) {
     let homesToSave: HomeInterface[] = [...this.allHomes];
-    if (homesToSave.some((_home) => _home.id===this.currentHome?.id)) {
-      homesToSave = this.allHomes.filter((_home) => _home.id!==this.currentHome?.id);
-    }
+    console.log('doAddHome()', home, homesToSave);
+    home.id = uuidv4();
     homesToSave.push(home);
     this.updateHomes(homesToSave);
     this.closeContactDetail();

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, signal } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, signal } from '@angular/core';
 import { UrlScrapperService } from '../../../services/url-scrapper.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -15,13 +15,16 @@ import { ɵEmptyOutletComponent } from "@angular/router";
   templateUrl: './home-url-scrapper.component.html',
   styleUrl: './home-url-scrapper.component.scss'
 })
-export class HomeUrlScrapperComponent {
+export class HomeUrlScrapperComponent implements OnInit {
 
   @Output()
   onCheckingUrl = new EventEmitter<boolean>(false);
 
   @Output()
   onAddHome = new EventEmitter<HomeInterface>();
+
+  @Input()
+  homes!: HomeInterface[];
 
   url = 'https://www.habitaclia.com/i500006018231';
   readonly isValidUrl = signal(false);
@@ -40,7 +43,7 @@ export class HomeUrlScrapperComponent {
     private readonly urlScrapperService: UrlScrapperService,
     private readonly homeInsightsService: HomeinsightsService
   ) {}
-
+  
   addHome() {
     this.onAddHome.emit(this.home);
   }
@@ -51,17 +54,20 @@ export class HomeUrlScrapperComponent {
       this.errorMsg = undefined;
       this.onCheckingUrl.emit(true);
       this.isCheckingUrl.set(true);
-      let matchesKnownDomain = this.knownUrlDomains.some((_domain) => this.url.includes(_domain));
-      if (matchesKnownDomain) {
-        /*
-        this.urlScrapper.scrapUrl(this.url).subscribe((_res) => {
-          console.log('res', _res);
-          this.onCheckingUrl.emit(false);
-          this.isCheckingUrl.set(false);
-          this.isValidUrl.set(true);
-          this.isCheckedUrl.set(true);
-        });
-        */
+
+      const existingUrl = this.homes.some((_home) => _home.url===this.url);
+      const matchesKnownDomain = this.knownUrlDomains.some((_domain) => this.url.includes(_domain));
+
+      console.log({existingUrl});
+      console.log({matchesKnownDomain});
+
+      if (existingUrl) { // Avoid duplicated url
+        this.errorMsg = 'Ja existeix un a finca o vivenda amb el mateix enllaç.';
+        this.isValidUrl.set(false);
+        this.isCheckedUrl.set(true);
+        this.onCheckingUrl.emit(false);
+        this.isCheckingUrl.set(false);
+      } else if (matchesKnownDomain) {
         this.urlScrapperService.scrapUrl(this.url).subscribe({
           next : (_res) => {
             this.onCheckingUrl.emit(false);
@@ -73,6 +79,8 @@ export class HomeUrlScrapperComponent {
             if (responseBodyNodes.length===1) {
               const bodyNode: Node = responseBodyNodes[0];
               this.home = this.homeInsightsService.getNewHome();
+
+              this.home.url = this.url;
 
               let titles: Node[] = this.urlScrapperService.findNodesWithTag(bodyNode, 'h1');
               if (titles.length>0) {
@@ -116,6 +124,12 @@ export class HomeUrlScrapperComponent {
         this.onCheckingUrl.emit(false);
         this.isCheckingUrl.set(false);
       }
+    }
+  }
+
+  ngOnInit(): void {
+    if (!this.homes) {
+      console.warn('No param \'homes\' passed to app-home-url-scrappern component');
     }
   }
 
