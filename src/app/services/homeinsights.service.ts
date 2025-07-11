@@ -14,7 +14,7 @@ export class HomeinsightsService {
 
   getNewHome(): HomeInterface {
     return {
-      id: uuidv4(),
+      id: '',
       title: '',
       agency: '',
       url: '',
