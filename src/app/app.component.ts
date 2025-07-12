@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { v4 as uuidv4 } from 'uuid';
-import { FormBuilder, FormGroup, FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ToastrService } from 'ngx-toastr';
 import { RouterOutlet } from '@angular/router';
@@ -9,6 +9,7 @@ import { NgbOffcanvas, NgbOffcanvasModule, NgbTooltipModule } from '@ng-bootstra
 import { HomeinsightsService } from './services/homeinsights.service';
 import { HomeInterface } from './model/interfaces/home.interface';
 import { HomeUrlScrapperComponent } from "./components/layouts/home-url-scrapper/home-url-scrapper.component";
+import { debounceTime, distinctUntilChanged, Observable, of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -61,6 +62,10 @@ export class AppComponent implements OnInit {
     { label: 'Agència', name: 'agency', type: 'text' },
     { label: 'Preu', name: 'price', type: 'number' }
   ];
+
+  searchText = '';
+  searchControl = new FormControl(this.searchText);
+
   readonly = true;
 
   constructor(
@@ -70,6 +75,14 @@ export class AppComponent implements OnInit {
     private toastrService: ToastrService
   ){
     this.detectDevice();
+
+    this.searchControl.valueChanges.pipe(
+      debounceTime(300), // Wait 300ms after the last keystroke
+      distinctUntilChanged(), // Only emit if the value is different from the last one
+      switchMap(query => this.searchHomes(query)) // Replace with actual API call
+    ).subscribe(_homes => {
+      this.homes = _homes;
+    });
   }
 
   private detectDevice(): void {
@@ -84,11 +97,17 @@ export class AppComponent implements OnInit {
     this.sortBy(ev['id'], ev['sortDir'] || 'ASC');
   }
 
-  searchHomes() {
-    this.homes = this.allHomes.filter((_home) => {
-      return _home.title!==undefined;
-    });
-    console.log(this.homes);
+  searchHomes(query: string | null): Observable<HomeInterface[]> {
+    console.log('searchHomes()', query);
+    this.searchText = query!=null? query : '';
+    if (query?.trim().length===0) {
+      return of ([...this.allHomes]);
+    }
+    return of(this.allHomes.filter((_home) => {
+      return _home.title.toLowerCase().includes(this.searchText.toLowerCase()) ||
+        _home.locationInfo?.address?.toLowerCase().includes(this.searchText.toLowerCase()) || 
+        _home.agency.toLowerCase().includes(this.searchText.toLowerCase());
+    }));
   }
 
   isSortedBy(sortField: string, sortDir?: 'ASC' | 'DESC') {
@@ -206,7 +225,7 @@ export class AppComponent implements OnInit {
     let homesToSave: HomeInterface[] = homes || [...this.allHomes];
     this.homeInsightsService.saveHomes(homesToSave).subscribe(() => {
       this.allHomes = homesToSave;
-      this.searchHomes();
+      this.searchHomes(this.searchText).subscribe((_homes) => this.homes=_homes);
     });
   }
 
@@ -253,7 +272,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.homeInsightsService.loadHomes().subscribe((_homes) => {
       this.allHomes = _homes;
-      this.searchHomes();
+      this.searchHomes(this.searchText).subscribe((_homes) => this.homes=_homes);
       this.sortBy('score', 'DESC');
 
       //this.homeInsightsService.saveHomes(this.allHomes).subscribe();

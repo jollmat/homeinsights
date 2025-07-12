@@ -43,10 +43,11 @@ export class HomeinsightsService {
           location: 'Sitges',
           address: 'C/ Port Alegre, 5'
         },
-        oks: [],
-        kos: [],
+        oks: ['Decoració','Ubicació'],
+        kos: ['Humitats', 'Sostre baix', 'Dimensions reduïdes', 'Claustrofòbia'],
         price: 285000,
-        visitStatus: 'pending'
+        visitStatus: 'visited',
+        score: 4
       },
       { 
         id: uuidv4(),

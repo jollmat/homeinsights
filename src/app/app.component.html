@@ -25,7 +25,7 @@
 
 <ng-template #gridTemplate>
     <div class="d-flex flex-column w-100 pb-4">
-        <ng-container [ngTemplateOutlet]="totalsHeaderTemplate"></ng-container>
+        <ng-container [ngTemplateOutlet]="headerTemplate"></ng-container>
         <div class="d-flex flex-wrap home-grid w-100 mt-5" [ngClass]="{'justify-content-center': isMobile(), 'mt-3': isMobile()}">
             <ng-container *ngFor="let home of homes">
                 <ng-container [ngTemplateOutlet]="gridCardTemplate" [ngTemplateOutletContext]="{home}"></ng-container>
@@ -36,10 +36,11 @@
 
 <ng-template #listTemplate>
     <div class="d-flex flex-column w-100">
-        <ng-container [ngTemplateOutlet]="totalsHeaderTemplate"></ng-container>
+        <ng-container [ngTemplateOutlet]="headerTemplate"></ng-container>
         <div class="w-100 d-flex justify-content-end align-items-center">
             <button class="btn btn-sm" (click)="openNewHome(homeDetailPopupTemplate)">+ Nova finca/vivenda</button>
         </div>
+        <div class="d-flex align-items-center text-start p-2 w-100">{{homes.length}} resultats:</div>
         <table class="table table-sm table-hover mt-3">
             <thead>
                 <tr>
@@ -127,6 +128,9 @@
             </div>
             <a [href]="home.url" class="text-decoration-none" target="_blank"><i class="fas fa-link me-1"></i>Website</a>
           </div>
+          <div class="d-flex justify-content-end align-items-center w-100 p-0 agencia mt-1">
+            {{home.agency}}
+          </div>
           <div class="d-flex justify-content-between align-items-center w-100 mt-3">
             <span class="score fs-4" title="Puntuació" style="background-color: {{getColorFromValue(home.score)}};">{{home.score || ''}}</span>
             <p class="card-text text-end fs-5">{{home.price | currency:'€':'symbol':'1.0-2'}}</p>
@@ -140,10 +144,13 @@
     <i class="fas ms-2" [ngClass]="{'fa-arrow-down': isSortedBy(sortField, 'ASC'), 'fa-arrow-up': isSortedBy(sortField, 'DESC')}"></i>
 </ng-template>
 
-<!-- Totals header template -->
-<ng-template #totalsHeaderTemplate>
+<!-- Header template -->
+<ng-template #headerTemplate>
     <div class="d-flex justify-content-between align-items-center w-100 pt-2 totals-header">
-        <div class="d-flex align-items-center w-50 text-start p-2">{{homes.length}} finques/vivendes</div>
+        <div class="w-50 me-3 my-2">
+            <div class="label-ng-select">Cerca per</div>
+            <input type="text" [formControl]="searchControl" class="form-control search-box w-100" placeholder="Títol, ubicació o agència">
+        </div>
         <ng-select
             *ngIf="viewType==='GRID'"
             class="w-50"

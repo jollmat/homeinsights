@@ -51,6 +51,11 @@ td {
 }
 
 .form-control {
+    &.search-box {
+        width: 300px;
+        position: relative;
+        top: -8px;
+    }
     &.disabled {
         cursor: default;
         pointer-events: none;
@@ -128,6 +133,20 @@ span {
     &.mobile {
         left: -8px;
     }
+}
+
+.label-ng-select {
+    position: relative;
+    top: -8px;
+    left: 5px;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.54);
+    /*font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";    ;*/
+}
+
+.agencia {
+    color: #888;
+    font-size: 12px;
 }
 
 ::ng-deep .custom-offcanvas-width {
