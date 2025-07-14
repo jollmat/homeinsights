@@ -21,7 +21,12 @@ export class HomeUrlScrapperComponent implements OnInit {
   onCheckingUrl = new EventEmitter<boolean>(false);
 
   @Output()
+  onHomeFound = new EventEmitter<HomeInterface>();
+
+  /*
+  @Output()
   onAddHome = new EventEmitter<HomeInterface>();
+  */
 
   @Input()
   homes!: HomeInterface[];
@@ -44,9 +49,11 @@ export class HomeUrlScrapperComponent implements OnInit {
     private readonly homeInsightsService: HomeinsightsService
   ) {}
   
+  /*
   addHome() {
     this.onAddHome.emit(this.home);
   }
+  */
 
   checkUrl() {
     this.isCheckedUrl.set(false);
@@ -64,9 +71,6 @@ export class HomeUrlScrapperComponent implements OnInit {
 
       const existingUrl = this.homes.some((_home) => _home.url===this.url);
       const matchesKnownDomain = this.knownUrlDomains.some((_domain) => this.url.includes(_domain));
-
-      console.log({existingUrl});
-      console.log({matchesKnownDomain});
 
       if (existingUrl) { // Avoid duplicated url
         this.errorMsg = 'Ja existeix un a finca o vivenda amb el mateix enllaç.';
@@ -96,7 +100,6 @@ export class HomeUrlScrapperComponent implements OnInit {
 
               let images: Node[] = this.urlScrapperService.findNodesWithClassAttr(bodyNode, 'print-xl');
               if (images.length>0) {
-                console.log(images);
                 this.home.urlImages = images.map((_imgNode) => {
                   if (_imgNode.attrs && this.urlScrapperService.nodeHasAttribute(_imgNode, 'src')) {
                     return 'https:' + this.urlScrapperService.getNodeAttr(_imgNode, 'src');
@@ -109,11 +112,18 @@ export class HomeUrlScrapperComponent implements OnInit {
               if (prices.length>0) {
                 prices = this.urlScrapperService.findNodesWithClassAttr(prices[0], 'font-2');
                 if (prices.length>0 && prices[0].children) {
-                  console.log();
                   this.home.price = Number(prices[0].children[0].toString().replaceAll('.', '').replace(' €', ''));
                 }
               }
-              console.log(this.home);
+
+              let agencies: Node[] =  this.urlScrapperService.findNodesWithAttributeValue(bodyNode, 'id', 'js-contact-top');
+              if (agencies.length>0) {
+                agencies = this.urlScrapperService.findNodesWithAttributeValue(bodyNode, 'class', 'title');
+                if (agencies.length>0 && agencies[0].children && agencies[0].children.length>0) {
+                  this.home.agency = agencies[0].children[0];
+                }
+              }
+              this.onHomeFound.emit(this.home);
             }
           },
           error : (_err) => {
@@ -122,6 +132,7 @@ export class HomeUrlScrapperComponent implements OnInit {
             this.isCheckingUrl.set(false);
             this.isValidUrl.set(false);
             this.isCheckedUrl.set(true);
+            this.onHomeFound.emit(undefined);
           }
         });
       } else {
@@ -130,11 +141,13 @@ export class HomeUrlScrapperComponent implements OnInit {
         this.isCheckedUrl.set(true);
         this.onCheckingUrl.emit(false);
         this.isCheckingUrl.set(false);
+        this.onHomeFound.emit(undefined);
       }
     }
   }
 
   ngOnInit(): void {
+    this.onHomeFound.emit(undefined);
     if (!this.homes) {
       console.warn('No param \'homes\' passed to app-home-url-scrappern component');
     }

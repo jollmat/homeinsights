@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { v4 as uuidv4 } from 'uuid';
 import { FormBuilder, FormGroup, FormsModule, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
@@ -9,7 +9,7 @@ import { NgbOffcanvas, NgbOffcanvasModule, NgbTooltipModule } from '@ng-bootstra
 import { HomeinsightsService } from './services/homeinsights.service';
 import { HomeInterface } from './model/interfaces/home.interface';
 import { HomeUrlScrapperComponent } from "./components/layouts/home-url-scrapper/home-url-scrapper.component";
-import { debounceTime, distinctUntilChanged, Observable, of, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Observable, of, Subscription, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +18,7 @@ import { debounceTime, distinctUntilChanged, Observable, of, switchMap } from 'r
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
 
   readonly isMobile = signal(false);
   readonly isTablet = signal(false);
@@ -27,6 +27,8 @@ export class AppComponent implements OnInit {
 
   readonly isNewHome = signal(false);
   readonly isCheckingUrl = signal(false);
+
+  readonly isReadonly = signal(false);
   
   allHomes: HomeInterface[] = [];
   homes: HomeInterface[] = [];
@@ -53,20 +55,22 @@ export class AppComponent implements OnInit {
   tooltipType: 'OK' | 'KO' = 'OK';
 
   currentHome?: HomeInterface;
+  newHome?: HomeInterface;
 
   form!: FormGroup;
   formConfig = [
-    { label: 'Títol', name: 'title', type: 'text', required: true },
-    { label: 'Addreça', name: 'address', type: 'text', required: true },
-    { label: 'Població', name: 'location', type: 'text' },
-    { label: 'Agència', name: 'agency', type: 'text' },
-    { label: 'Preu', name: 'price', type: 'number' }
+    { label: 'Títol', name: 'title', type: 'text', required: true, default: '' },
+    { label: 'Adreça', name: 'address', type: 'text', required: true, default: '' },
+    { label: 'Població', name: 'location', type: 'text', required: true, default: 'Sitges' },
+    { label: 'URL anunci', name: 'url', type: 'text', required: true, default: '' },
+    { label: 'Agència', name: 'agency', type: 'text', required: true, default: '' },
+    { label: 'Preu', name: 'price', type: 'number', required: true }
   ];
 
   searchText = '';
   searchControl = new FormControl(this.searchText);
 
-  readonly = true;
+  formChangeSubscription?: Subscription;
 
   constructor(
     private readonly homeInsightsService: HomeinsightsService,
@@ -84,7 +88,7 @@ export class AppComponent implements OnInit {
       this.homes = _homes;
     });
   }
-
+  
   private detectDevice(): void {
     const width = window.innerWidth;
 
@@ -185,18 +189,29 @@ export class AppComponent implements OnInit {
     const group: any = {};
     this.formConfig.forEach(field => {
       group[field.name] = field.required
-        ? [null, Validators.required]
-        : [null];
+        ? [field.default || null, Validators.required]
+        : [field.default || null];
     });
     this.form = this.fb.group(group);
 
-    if (this.currentHome) {
+    this.formChangeSubscription = this.form.valueChanges.subscribe(value => {
+      if (this.isNewHome() && this.form.valid) {
+        this.newHome = {} as HomeInterface;
+        this.newHome.oks = [];
+        this.newHome.kos = [];
+      } else {
+        this.newHome = undefined;
+      }
+    });
+
+    if (!this.isNewHome() && this.currentHome) {
       this.form.patchValue({
         title: this.currentHome.title,
         address: this.currentHome.locationInfo?.address,
         location: this.currentHome.locationInfo?.location,
         agency: this.currentHome.agency,
-        price: this.currentHome.price
+        price: this.currentHome.price,
+        url: this.currentHome.url
       });
     }
   }
@@ -204,6 +219,7 @@ export class AppComponent implements OnInit {
   newHomeFrom = 'form';
   openNewHome(modal: unknown) {
     const newHome: HomeInterface = this.homeInsightsService.getNewHome();
+    this.newHome = undefined;
     this.createForm();
     this.openHomeDetail(modal, newHome);
   }
@@ -211,7 +227,7 @@ export class AppComponent implements OnInit {
   openHomeDetail(modal: unknown, home: HomeInterface) {
     this.isNewHome.set(home.id.length===0);
     this.newHomeFrom = this.isNewHome()? 'link':'form';
-    this.readonly = !this.isNewHome();
+    this.isReadonly.set(!this.isNewHome());
 
     this.currentHome = home;
     this.createForm();
@@ -230,25 +246,92 @@ export class AppComponent implements OnInit {
   }
 
   saveHome() {
-    console.log('saveHome()', this.currentHome);
     if (this.currentHome) {
+      console.log('saveHome()', this.currentHome, this.form.getRawValue());
+      const homeForm: {
+        address: string,
+        agency: string,
+        location: string,
+        price: number,
+        title: string,
+        url: string
+      } = this.form.getRawValue() as {
+        address: string,
+        agency: string,
+        location: string,
+        price: number,
+        title: string,
+        url: string
+      };
+
       let homesToSave: HomeInterface[] = [...this.allHomes];
       if (homesToSave.some((_home) => _home.id===this.currentHome?.id)) {
         homesToSave = this.allHomes.filter((_home) => _home.id!==this.currentHome?.id);
       }
-      homesToSave.push(this.currentHome);
+
+      const currenHomeNew: HomeInterface = Object.assign({}, this.currentHome);
+      if (currenHomeNew.locationInfo) {
+        currenHomeNew.locationInfo.address = homeForm.address;
+        currenHomeNew.locationInfo.location = homeForm.location;
+      }
+      currenHomeNew.agency = homeForm.agency;
+      currenHomeNew.price = homeForm.price;
+      currenHomeNew.title = homeForm.title;
+      currenHomeNew.url = homeForm.url;
+
+      homesToSave.push(currenHomeNew);
       this.updateHomes(homesToSave);
+      this.toastrService.success('Finca/vivenda actualitzada correctament!');
     }
+  }
+
+  saveNewHome() {
+    if (this.newHomeFrom==='form' && this.form && this.form.valid) {
+      const formHome: {
+        address: string,
+        agency: string,
+        location: string,
+        price: number,
+        title: string,
+        url: string
+      } = this.form.getRawValue() as {
+        address: string,
+        agency: string,
+        location: string,
+        price: number,
+        title: string,
+        url: string
+      };
+      this.doAddHome({
+        title: formHome.title,
+        locationInfo: {
+          location: formHome.location,
+          address: formHome.address
+        },
+        agency: formHome.agency,
+        url: formHome.url,
+        price: formHome.price
+      } as HomeInterface);
+    } else if (this. newHomeFrom==='link' && this.newHome) {
+      this.doAddHome(this.newHome);
+    }
+    this.newHome = undefined;
   }
 
   doAddHome(home: HomeInterface) {
     let homesToSave: HomeInterface[] = [...this.allHomes];
-    console.log('doAddHome()', home, homesToSave);
+    home.oks = [];
+    home.kos = [];
     home.id = uuidv4();
     homesToSave.push(home);
     this.updateHomes(homesToSave);
     this.closeContactDetail();
     this.toastrService.success('Nova finca/vivenda creada correctament!');
+  }
+
+  doAddHomeFound(home?: HomeInterface) {
+    console.log('doAddHomeFound()', home);
+    this.newHome = home;
   }
 
   closeContactDetail() {
@@ -277,5 +360,11 @@ export class AppComponent implements OnInit {
 
       //this.homeInsightsService.saveHomes(this.allHomes).subscribe();
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.formChangeSubscription) {
+      this.formChangeSubscription.unsubscribe();
+    }
   }
 }
