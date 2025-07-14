@@ -50,6 +50,13 @@ export class HomeUrlScrapperComponent implements OnInit {
 
   checkUrl() {
     this.isCheckedUrl.set(false);
+    
+    // Clean format
+    this.url = this.url.replace('https://m.','https://');
+    if (this.url.indexOf('?')>0) {
+      this.url = this.url.substring(0, this.url.indexOf('?'));
+    }
+
     if (this.url.trim().length>0) {
       this.errorMsg = undefined;
       this.onCheckingUrl.emit(true);

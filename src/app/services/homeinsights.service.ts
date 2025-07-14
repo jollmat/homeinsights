@@ -207,6 +207,54 @@ export class HomeinsightsService {
         price: 265000,
         visitStatus: 'visited',
         score: 7
+      },
+      { 
+        id: uuidv4(),
+        title: 'Apartamento cercano al centro en Centre Sitges',
+        agency: 'Finques Vallpineda',
+        url: 'https://www.habitaclia.com/i19202004337189',
+        urlImages: [
+          'https://images.habimg.com/imgh/19202-4337189/apartamento-cercano-al-centro-sitges_c615916e-1be9-4b23-bf95-8140708c9f9eXL.jpg',
+          'https://images.habimg.com/imgh/19202-4337189/apartamento-cercano-al-centro-sitges_538293ea-9631-456d-8793-61e75926cc90XL.jpg',
+          'https://images.habimg.com/imgh/19202-4337189/apartamento-cercano-al-centro-sitges_caf7eec5-c90f-4d9f-8336-8f93ee8abb8aXL.jpg',
+          'https://images.habimg.com/imgh/19202-4337189/apartamento-cercano-al-centro-sitges_ba27a455-908c-4455-9511-d0c0fbe24136G.jpg'
+        ],
+        locationInfo: {
+          location: 'Sitges',
+          address: ''
+        },
+        oks: [],
+        kos: [],
+        price: 239000,
+        visitStatus: 'pending',
+        score: undefined
+      },
+      { 
+        id: uuidv4(),
+        title: 'Piso típico a un paso del mar! en Centre Sitges',
+        agency: 'Inedith',
+        url: 'https://www.habitaclia.com/comprar-piso-tipico_de_a_un_paso_del_mar_centre-sitges-i24138004037984.htm?pag=2&hab=99&m2=0&pmax=99999999&st=piso-duplex-casa-apartamento-torre-atico-masia-loft-casa_pareada-estudio-casa_adosada-planta_baja-triplex-chalet&f=&geo=p&from=list&lo=55',
+        urlImages: [
+          'https://images.habimg.com/imgh/24138-4037984/piso-tipico-de-sitges-a-un-paso-del-mar-sitges_8e6c9214-b070-4449-90cf-f816ff8957bbXL.jpg',
+          'https://images.habimg.com/imgh/24138-4037984/piso-tipico-de-sitges-a-un-paso-del-mar-sitges_3c6f8478-ad91-4844-830a-662ffecb02beXL.jpg',
+          'https://images.habimg.com/imgh/24138-4037984/piso-tipico-de-sitges-a-un-paso-del-mar-sitges_e8c22330-a95f-4129-b6f0-5912fe969a5cXL.jpg',
+          'https://images.habimg.com/imgh/24138-4037984/piso-tipico-de-sitges-a-un-paso-del-mar-sitges_96ea1ab6-1371-4d4b-b692-00c904dcc82bG.jpg',
+          'https://images.habimg.com/imgh/24138-4037984/piso-tipico-de-sitges-a-un-paso-del-mar-sitges_5f6e7954-9ed5-4bb1-aa21-083c8207dabfG.jpg',
+          'https://images.habimg.com/imgh/24138-4037984/piso-tipico-de-sitges-a-un-paso-del-mar-sitges_8ff7e206-fa74-40d1-906c-9b5c38fc39c7G.jpg',
+          'https://images.habimg.com/imgh/24138-4037984/piso-tipico-de-sitges-a-un-paso-del-mar-sitges_0ff57f99-8f90-449a-bc75-cfe3c784cfa1G.jpg',
+          'https://images.habimg.com/imgh/24138-4037984/piso-tipico-de-sitges-a-un-paso-del-mar-sitges_012ae5db-d401-431e-88a9-1b52371cdf19G.jpg',
+          'https://images.habimg.com/imgh/24138-4037984/piso-tipico-de-sitges-a-un-paso-del-mar-sitges_5be7a930-a202-478c-918c-ec7ff61d3afaXL.jpg',
+          'https://images.habimg.com/imgh/24138-4037984/piso-tipico-de-sitges-a-un-paso-del-mar-sitges_1d40a4a4-7ec2-4b97-ad84-1cb88f149fa5XL.jpg'
+        ],
+        locationInfo: {
+          location: 'Sitges',
+          address: 'C/ Carreta'
+        },
+        oks: [],
+        kos: [],
+        price: 285000,
+        visitStatus: 'pending',
+        score: undefined
       }
     ] as HomeInterface[];
   }

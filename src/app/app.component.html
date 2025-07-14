@@ -126,7 +126,7 @@
                 <ng-container *ngIf="home.oks.length>0" [ngTemplateOutlet]="prosContras" [ngTemplateOutletContext]="{items:home.oks, itemsOther: home.kos, type: 'OK', showIcon: true, className: 'me-3'}"></ng-container>
                 <ng-container *ngIf="home.kos.length>0" [ngTemplateOutlet]="prosContras" [ngTemplateOutletContext]="{items:home.kos, itemsOther: home.kos, type: 'KO', showIcon: true}"></ng-container>
             </div>
-            <a [href]="home.url" class="text-decoration-none" target="_blank"><i class="fas fa-link me-1"></i>Website</a>
+            <a [href]="home.url" class="text-decoration-none" target="_blank"><i class="fas fa-link me-1"></i>Anunci</a>
           </div>
           <div class="d-flex justify-content-end align-items-center w-100 p-0 agencia mt-1">
             {{home.agency}}
