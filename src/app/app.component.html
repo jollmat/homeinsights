@@ -24,7 +24,7 @@
 <ng-container *ngIf="isMobile()">
     <div class="d-flex flex-column w-100">
         <div class="d-flex align-items-center justify-content-between 100 fs-3 title-block p-3">
-            <div><i class="fas fa-home me-2"></i><span>HomeInsights</span></div>
+            <div><i class="fas fa-home me-2"></i><span>HomeInsights <ng-container *ngIf="homes && homes.length>0"><small>({{homes.length}})</small></ng-container></span></div>
             <button class="btn btn-sm btn-light" (click)="openNewHome(homeDetailPopupTemplate)">+ New</button>
         </div>
         <div class="w-100 px-3">
