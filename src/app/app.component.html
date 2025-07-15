@@ -303,6 +303,7 @@
                         class="w-100"
                         [items]="[{name:'Pendent', id:'pending'},{name:'Visitat', id:'visited'},{name:'Descartat', id:'discarted'}]"
                         [disabled]="isReadonly()"
+                        [readonly]="isReadonly()"
                         bindLabel="name"
                         bindValue="id"
                         [multiple]="false"
