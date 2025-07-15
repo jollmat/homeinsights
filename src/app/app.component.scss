@@ -3,6 +3,10 @@
     position: sticky;
     top: 0px;
     z-index: 1;
+
+    small {
+        font-size: 14px;
+    }
 }
 
 .totals-header {
@@ -94,6 +98,16 @@ span {
         padding: 5px 10px;
         border-radius: 5px;
     }
+}
+
+.visit-status-visited{
+    color: gold;
+}
+.visit-status-pending{
+    color: rgb(203, 190, 120);
+}
+.visit-status-discarted{
+    color: rgb(239, 132, 108);
 }
 
 .visited-flag {

@@ -7,7 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { RouterOutlet } from '@angular/router';
 import { NgbOffcanvas, NgbOffcanvasModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { HomeinsightsService } from './services/homeinsights.service';
-import { HomeInterface } from './model/interfaces/home.interface';
+import { HomeInterface, VisitStatus } from './model/interfaces/home.interface';
 import { HomeUrlScrapperComponent } from "./components/layouts/home-url-scrapper/home-url-scrapper.component";
 import { debounceTime, distinctUntilChanged, Observable, of, Subscription, switchMap } from 'rxjs';
 
@@ -59,12 +59,14 @@ export class AppComponent implements OnInit, OnDestroy {
 
   form!: FormGroup;
   formConfig = [
+    { label: 'Estat visita', name: 'visitStatus', type: 'select', required: true, default: 'pending' },
     { label: 'Títol', name: 'title', type: 'text', required: true, default: '' },
     { label: 'Adreça', name: 'address', type: 'text', required: true, default: '' },
     { label: 'Població', name: 'location', type: 'text', required: true, default: 'Sitges' },
     { label: 'URL anunci', name: 'url', type: 'text', required: true, default: '' },
     { label: 'Agència', name: 'agency', type: 'text', required: true, default: '' },
-    { label: 'Preu', name: 'price', type: 'number', required: true }
+    { label: 'Preu', name: 'price', type: 'number', required: true },
+    { label: 'Score', name: 'score', type: 'number', required: false }
   ];
 
   searchText = '';
@@ -102,7 +104,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   searchHomes(query: string | null): Observable<HomeInterface[]> {
-    console.log('searchHomes()', query);
     this.searchText = query!=null? query : '';
     if (query?.trim().length===0) {
       return of ([...this.allHomes]);
@@ -211,7 +212,9 @@ export class AppComponent implements OnInit, OnDestroy {
         location: this.currentHome.locationInfo?.location,
         agency: this.currentHome.agency,
         price: this.currentHome.price,
-        url: this.currentHome.url
+        url: this.currentHome.url,
+        score: this.currentHome.score,
+        visitStatus: this.currentHome.visitStatus
       });
     }
   }
@@ -242,26 +245,30 @@ export class AppComponent implements OnInit, OnDestroy {
     this.homeInsightsService.saveHomes(homesToSave).subscribe(() => {
       this.allHomes = homesToSave;
       this.searchHomes(this.searchText).subscribe((_homes) => this.homes=_homes);
+      this.sortBy(this.sortConfig.sortBy, this.sortConfig.sortDir);
     });
   }
 
   saveHome() {
     if (this.currentHome) {
-      console.log('saveHome()', this.currentHome, this.form.getRawValue());
       const homeForm: {
         address: string,
         agency: string,
         location: string,
         price: number,
         title: string,
-        url: string
+        url: string,
+        score: number,
+        visitStatus: VisitStatus
       } = this.form.getRawValue() as {
         address: string,
         agency: string,
         location: string,
         price: number,
         title: string,
-        url: string
+        url: string,
+        score: number,
+        visitStatus: VisitStatus
       };
 
       let homesToSave: HomeInterface[] = [...this.allHomes];
@@ -278,6 +285,8 @@ export class AppComponent implements OnInit, OnDestroy {
       currenHomeNew.price = homeForm.price;
       currenHomeNew.title = homeForm.title;
       currenHomeNew.url = homeForm.url;
+      currenHomeNew.score = homeForm.score;
+      currenHomeNew.visitStatus = homeForm.visitStatus;
 
       homesToSave.push(currenHomeNew);
       this.updateHomes(homesToSave);
@@ -322,15 +331,21 @@ export class AppComponent implements OnInit, OnDestroy {
     let homesToSave: HomeInterface[] = [...this.allHomes];
     home.oks = [];
     home.kos = [];
+    home.visitStatus = 'pending';
     home.id = uuidv4();
-    homesToSave.push(home);
-    this.updateHomes(homesToSave);
-    this.closeContactDetail();
-    this.toastrService.success('Nova finca/vivenda creada correctament!');
+
+    const existsUrl = homesToSave.some((_home) => _home.url===home.url);
+    if (existsUrl) {
+      this.toastrService.error('Ja existeix un a finca/vivenda per a la URL de l\'anunci indicat');
+    } else {
+      homesToSave.push(home);
+      this.updateHomes(homesToSave);
+      this.closeContactDetail();
+      this.toastrService.success('Nova finca/vivenda creada correctament!');
+    }
   }
 
   doAddHomeFound(home?: HomeInterface) {
-    console.log('doAddHomeFound()', home);
     this.newHome = home;
   }
 
@@ -343,7 +358,6 @@ export class AppComponent implements OnInit, OnDestroy {
     if (val===undefined) {
       return 'transparent';
     } else {
-      // return HomeinsightsService.getColorFromValue(val);
       return HomeinsightsService.getRatingColor(val);
     }
   }
