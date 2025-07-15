@@ -7,10 +7,10 @@
     </div>
     <div class="d-flex flex-column w-100 p-2">
         <div class="btn-group w-50" role="group" aria-label="Basic example" style="min-width: 250px;">
-            <button type="button" class="btn btn-secondary" [ngClass]="{'active': viewType==='GRID'}" (click)="viewType='GRID'">
+            <button type="button" class="btn btn-secondary" [disabled]="isCheckingUrl()" [ngClass]="{'active': viewType==='GRID'}" (click)="viewType='GRID'">
                 <i class="fas fa-grip me-2"></i>Graella
             </button>
-            <button type="button" class="btn btn-secondary" [ngClass]="{'active': viewType==='LIST'}" (click)="viewType='LIST'">
+            <button type="button" class="btn btn-secondary" [disabled]="isCheckingUrl()" [ngClass]="{'active': viewType==='LIST'}" (click)="viewType='LIST'">
                 <i class="fas fa-list me-2"></i>Llistat
             </button>
         </div>
@@ -129,8 +129,8 @@
         <div *ngIf="home.visitStatus==='discarted'" class="discarted-flag text-center py-0 px-2" [ngClass]="{'mobile': isMobile()}"><i class="fas fa-close me-2"></i>Descartat</div>
         
         <div class="card-body">
-          <h5 class="card-title cursor-pointer" (click)="openHomeDetail(homeDetailPopupTemplate, home)">{{home.title}}</h5>
-          <p class="card-text">{{home.locationInfo?.address}}</p>
+          <h5 class="card-title cursor-pointer ellipsis-2-lines" (click)="openHomeDetail(homeDetailPopupTemplate, home)">{{home.title}}</h5>
+          <p class="card-text ellipsis-2-lines">{{home.locationInfo?.address}}</p>
           <div class="w-100 d-flex justify-content-between" style="gap: 2px;">
             <div class="d-flex">
                 <ng-container *ngIf="home.oks.length>0" [ngTemplateOutlet]="prosContras" [ngTemplateOutletContext]="{items:home.oks, itemsOther: home.kos, type: 'OK', showIcon: true, className: 'me-3'}"></ng-container>
@@ -252,7 +252,7 @@
             <span class="fs-3" *ngIf="!isNewHome()">Detall finca/vivenda</span>
             <span class="fs-3" *ngIf="isNewHome()">Nova finca/vivenda</span>
             <div class="d-flex align-items-center justify-content-end">
-                <i class="fas fa-close cursor-pointer fs-3" (click)="closeContactDetail()"></i>
+                <i class="fas fa-close cursor-pointer fs-3" (click)="closeContactDetail()" [ngClass]="{disabled: isCheckingUrl()}"></i>
             </div>
         </div>
     </div>
@@ -338,8 +338,8 @@
     </div>
     <div class="modal-footer">
         <div class="d-flex align-items-center justify-content-center w-100 p-3">
-            <button class="btn btn-sm btn-light me-3" (click)="closeContactDetail()">Close</button>
-            <button *ngIf="isNewHome()" [disabled]="!newHome || (newHomeFrom==='form' && !form.valid)" class="btn btn-sm btn-danger" (click)="saveNewHome();closeContactDetail()">Create</button>
+            <button class="btn btn-sm btn-light me-3" (click)="closeContactDetail()" [disabled]="isCheckingUrl()">Close</button>
+            <button *ngIf="isNewHome()" [disabled]="!newHome || (newHomeFrom==='form' && !form.valid) || isCheckingUrl()" class="btn btn-sm btn-danger" (click)="saveNewHome();closeContactDetail()">Create</button>
             <button *ngIf="!isNewHome() && !isReadonly()" class="btn btn-sm btn-danger" (click)="saveHome();closeContactDetail()">Save</button>
             <button class="btn btn-sm btn-light ms-1" (click)="isReadonly.set(false)" *ngIf="!isNewHome() && isReadonly()"><i class="fas fa-edit fs-4"></i>Editar</button>
         </div>
